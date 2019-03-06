@@ -44,6 +44,7 @@ const LineSlicesItem = ({ slice, height, showTooltip, hideTooltip, isHover }) =>
             height={height}
             fill="#F00"
             fillOpacity={0}
+            onTouchEnd={showTooltip}
             onMouseEnter={showTooltip}
             onMouseMove={showTooltip}
             onMouseLeave={hideTooltip}
@@ -95,8 +96,13 @@ const enhance = compose(
     ),
     withHandlers({
         showTooltip: ({ showTooltip, setIsHover, tooltipElement }) => e => {
-            setIsHover(true)
-            showTooltip(tooltipElement, e)
+            const isIOS = navigator.userAgent.match(/(iPod|iPhone|iPad)/) && navigator.userAgent.match(/AppleWebKit/)
+
+            if (!isIOS) {
+                setIsHover(true)
+            }
+
+            showTooltip(tooltipElement, isIOS ? e.changedTouches[0] : e)
         },
         hideTooltip: ({ hideTooltip, setIsHover }) => () => {
             setIsHover(false)
